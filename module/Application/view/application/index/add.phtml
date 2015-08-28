@@ -1,0 +1,86 @@
+<?php
+// module/Application/view/application/index/add.phtml:
+$title = 'Add New Lead';
+$this->headTitle($title);
+?>
+<h1>
+<?php echo $this->escapeHtml($title); ?>
+<span class="pull-right"> <a class="btn btn-info"
+		href="<?php echo $this->url('home', array('action'=>'index'));?>">Back</a>
+	</span>
+</h1>
+<hr>
+<?php
+$form = $this->form;
+
+$form->setAttribute('action', 
+		$this->url('home', array(
+				'action' => 'add'
+		)))
+	->prepare();
+
+echo $this->form()->openTag($form);
+$lead = $form->get('lead');
+?>
+<div class="row content-row">
+	<div class="col-md-12">
+		<h3><?php echo $lead->getLabel(); ?></h3>
+
+		<table class="table">
+<?php
+foreach ($lead as $fieldName => $field) {
+	if ($field instanceof Zend\Form\Fieldset) {
+		foreach ($field as $_fieldName => $_field) {
+			echo "<tr" .
+					 ($_field->getAttribute("type") == "hidden" ? " class='hidden'" : "") .
+					 "><td>" . $this->formRow($_field) . "</td></tr>\n";
+		}
+	} else {
+		echo "<tr" .
+				 ($field->getAttribute("type") == "hidden" ? " class='hidden'" : "") .
+				 "><td>" . $this->formRow($field) . "</td></tr>\n";
+	}
+}
+$detail = $form->get('detail');
+?>
+</table>
+	</div>
+	<div class="col-md-12">
+		<hr>
+		<h3><?php echo $detail->getLabel(); ?></h3>
+
+		<table class="table">
+<?php
+foreach ($detail as $fieldName => $field) {
+	if ($field instanceof Zend\Form\Fieldset) {
+		foreach ($field as $_fieldName => $_field) {
+			echo "<tr" .
+					 ($_field->getAttribute("type") == "hidden" ? " class='hidden'" : "") .
+					 "><td>" . $this->formRow($_field) . "</td></tr>\n";
+		}
+	} else {
+		echo "<tr" .
+				 ($field->getAttribute("type") == "hidden" ? " class='hidden'" : "") .
+				 "><td>" . $this->formRow($field) . "</td></tr>\n";
+	}
+}
+
+echo "<tr><td>" . $this->formRow($form->get('submit')) . "</td></tr>\n";
+
+?>
+</table>
+	</div>
+</div>
+<?php
+$_form = $form->get('form');
+foreach ($_form as $fieldName => $field) {
+	if ($field instanceof Zend\Form\Fieldset) {
+		foreach ($field as $_fieldName => $_field) {
+			echo $this->formElement($_field);
+		}
+	} else {
+		echo $this->formElement($field);
+	}
+}
+?>
+<?php echo $this->form()->closeTag(); ?>

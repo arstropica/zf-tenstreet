@@ -1,0 +1,228 @@
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
+.zf-green {
+	color: #68B604;
+}
+
+hr.small {
+	margin: 5px 0;
+}
+
+.formtable-header {
+}
+
+.formtable-header .pagination, .formtable-header .form-inline {
+	margin: 5px 0;
+}
+
+.formtable-header .pagination > li > a, .formtable-header .pagination > li >
+span {
+	padding: 8px 14px;
+}
+
+.formtable-header .leadform fieldset {
+	border: 1px solid #DDD;
+	padding: 5px;
+}
+
+.formtable-header .form-inline fieldset {
+	display: inline-block;
+}
+
+.formtable-header .form-group-daterange {
+	background: #FFF;
+	cursor: pointer;
+	padding: 2px 5px;
+	border: 1px solid #CCC;
+	width: 100%;
+	border-radius: 4px;
+	height: 36px;
+}
+
+.formtable-header .form-group-daterange .glyphicon {
+	vertical-align: middle;
+}
+
+.formtable-header .form-control-daterange input.form-control {
+	border: none;
+	-webkit-box-shadow: none;
+	box-shadow: none;
+	padding: 0;
+}
+
+.form-control-daterange input.form-control {
+	height: 30px;
+	font-size: 9pt;
+}
+
+form.leadform #submitbutton {
+	font-size: 10pt;
+	padding: 4px 10px;
+	height: 36px;
+}
+
+#leadstable {
+	width: 100%;
+	max-width: 100%;
+	table-layout: fixed;
+}
+
+#leadstable td {
+	white-space: nowrap;
+	text-overflow: ellipsis;
+	overflow: hidden;
+}
+
+#leadstable .lead\.id, #leadstable .submitted {
+	width: 10%;
+}
+
+#leadstable .form\.source {
+	width: 25%;
+}
+
+#leadstable .lastresponse {
+	width: 25%;
+}
+
+#leadstable .timecreated, #leadstable .actions {
+	width: 15%;
+}
+
+.btn-success {
+	background-color: #57A900;
+	background-image: -moz-linear-gradient(top, #70D900, #57A900);
+	background-image: -ms-linear-gradient(top, #70D900, #57A900);
+	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
+	background-image: -webkit-linear-gradient(top, #70D900, #57A900);
+	background-image: -o-linear-gradient(top, #70D900, #57A900);
+	background-image: linear-gradient(top, #70d900, #57a900);
+	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900',
+		endColorstr='#57a900', GradientType=0);
+}
+
+.btn-success:hover, .btn-success:active, .btn-success.active,
+.btn-success.disabled, .btn-success[disabled] {
+	background-color: #57A900;
+}
+
+.btn-success:active, .btn-success.active {
+	background-color: #57A900;
+}
+
+div.container a.brand {
+	background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
+	margin-left: 0;
+	padding: 8px 20px 12px 40px;
+}
+
+.navbar-brand > img {
+	display: inline;
+}
+
+a.sort {
+	display: block;
+	text-decoration: none;
+}
+
+.sort.selected .glyphicon {
+	visibility: visible;
+}
+
+.sort .glyphicon {
+	top: 0;
+	margin-left: 5px;
+	visibility: hidden;
+	font: normal 7pt 'Glyphicons Halflings';
+	color: #444;
+}
+
+.sort .glyphicon.desc:before {
+	content: "\e252";
+}
+
+.sort .glyphicon.asc:before {
+	content: "\e253";
+}
+
+.sort:hover .glyphicon {
+	visibility: visible;
+}
+
+.sort:hover .glyphicon.desc:before {
+	content: "\e253";
+}
+
+.sort:hover .glyphicon.asc:before {
+	content: "\e252";
+}
+
+.action-index.controller-error .breadcrumb {
+	display: none;
+}
+
+.action-index.controller-error > .container .row.content .col-md-12 {
+	background-color: #D29656;
+	width: 100%;
+	min-height: 200px;
+	-moz-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.4);
+	-webkit-box-shadow: 0px 1px 1px 1px rgba(0,0,0,0.4);
+	box-shadow: 0px 1px 1px 1px rgba(0, 0, 0, 0.4);
+	-ms-filter: "progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=90, Color='#000000')";
+	filter: progid:DXImageTransform.Microsoft.Shadow(Strength=1, Direction=90, Color='#000000');
+}
+
+.action-index.controller-error h1 {
+	display: block;
+	line-height: 120px;
+	color: rgba(255, 255, 255, 0.9);
+	font-size: 8em;
+	text-transform: uppercase;
+	margin-top: 6px;
+	letter-spacing: -2px;
+	font-family: 'Arial', cursive;
+	text-shadow: 0px 1px 2px rgba(255, 255, 255, 0.5);
+}
+
+.action-index.controller-error .desc {
+	font-family: 'Montserrat Alternates', sans-serif;
+	font-size: 24px;
+	line-height: 34px;
+	color: #CCCCCC;
+	padding-bottom: 10px;
+	padding-top: 30px;
+	max-width: 600px;
+}
+
+.formtable-header .leadform .has-error ul {
+	display: none;
+}
+
+.content-row {
+	padding: 30px;
+}
+
+.content-row .table {
+	margin-left: 30px;
+}
+
+.navbar-nav > li > span.label {
+	padding-top: 15px;
+	padding-bottom: 15px;
+	line-height: 20px;
+	font-weight: normal;
+	font-size: 11pt;
+	padding-right: 0;
+	margin-right: 0;
+}
+
+.tableform-wrapper {
+	width: 100%;
+	max-width: 350px;
+	margin: 0 auto;
+	padding: 15px;
+	display: inline-block;
+}

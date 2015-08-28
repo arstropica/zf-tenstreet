@@ -1,0 +1,66 @@
+<?php
+namespace ApiUser\Authentication\Adapter;
+use ZF\OAuth2\Adapter\PdoAdapter;
+
+/**
+ * Custom extension of PdoAdapter to validate against the WEB_User table.
+ */
+class OAuth2Adapter extends PdoAdapter
+{
+
+	public function __construct ($connection, $config = array())
+	{
+		$config = [
+				'user_table' => 'users'
+		];
+		
+		return parent::__construct($connection, $config);
+	}
+
+	public function getUser ($username)
+	{
+		$sql = sprintf('SELECT * from %s where email=:username', 
+				$this->config['user_table']);
+		$stmt = $this->db->prepare($sql);
+		$stmt->execute(array(
+				'username' => $username
+		));
+		
+		if (! $userInfo = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+			return false;
+		}
+		
+		// the default behavior is to use "username" as the user_id
+		return array_merge(array(
+				'user_id' => $username
+		), $userInfo);
+	}
+
+	public function setUser ($username, $password, $firstName = null, 
+			$lastName = null)
+	{
+		// do not store in plaintext, use bcrypt
+		$this->createBcryptHash($password);
+		
+		// if it exists, update it.
+		if ($this->getUser($username)) {
+			$sql = sprintf(
+					'UPDATE %s SET password=:password WHERE email=:username', 
+					$this->config['user_table']);
+			$stmt = $this->db->prepare($sql);
+		} else {
+			$sql = sprintf(
+					'INSERT INTO %s (email, password)
+                    VALUES (:username, :password)', 
+					$this->config['user_table']);
+			$stmt = $this->db->prepare($sql);
+		}
+		
+		return $stmt->execute(compact('username', 'password'));
+	}
+
+	protected function checkPassword ($user, $password)
+	{
+		return $this->verifyHash($password, $user['password']);
+	}
+}

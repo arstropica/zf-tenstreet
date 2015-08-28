@@ -1,0 +1,144 @@
+<?php
+// module/Application/view/application/index/index.phtml:
+$title = 'Display Leads';
+$this->headTitle($title);
+?>
+<h1>
+<?php echo $this->escapeHtml($title); ?>
+<span class="pull-right" style="margin-left: 15px;"> <a
+		href="<?php echo $this->url('home', array('action' => 'export')); ?>"
+		class="btn btn-info" title="Export Leads">Export Leads</a>
+	</span> <span class="pull-right"> <a
+		href="<?php echo $this->url('home', array('action' => 'add')); ?>"
+		class="btn btn-success" title="Add New Lead">Add New Lead</a>
+	</span>
+</h1>
+<hr class="small">
+<br />
+<div class="formtable-header">
+<?php
+echo $this->paginationControl(
+		// the paginator object
+		$this->leads, 
+		// the scrolling style
+		'sliding', 
+		// the partial to use to render the control
+		'paginator-slide', 
+		// the route to link to when a user clicks a control link
+		array(
+				'sort' => $this->sort,
+				'order' => $this->order
+		));
+
+$filters = $this->filters;
+
+$filters->setAttribute('class', 'pull-right leadform');
+
+echo $this->form(null, 
+		\Application\Form\View\Helper\LeadFilterForm::LAYOUT_INLINE)->openTag(
+		$filters);
+
+foreach ($filters as $filter) {
+	if ($filter instanceof Zend\Form\Fieldset) {
+		echo "<fieldset>" . PHP_EOL;
+		foreach ($filter as $field => $element) {
+			echo $this->formRow($element);
+		}
+		echo "</fieldset>" . PHP_EOL;
+	} else {
+		echo $this->formRow($filter);
+	}
+}
+
+echo $this->form()->closeTag($filter);
+?>
+</div>
+<?php
+$batchForm = $this->batchForm;
+
+$batchForm->setAttribute('id', 'leadbatchform');
+
+$batchForm->setAttribute('action', 
+		$this->url('home', array(
+				'action' => 'batchsubmit'
+		)));
+
+$batchForm->prepare();
+
+echo $this->form(null, 
+		\Application\Form\View\Helper\LeadFilterForm::LAYOUT_INLINE)->openTag(
+		$batchForm);
+?>
+<table class="table table-striped" id="leadstable">
+	<thead>
+		<tr>
+			<th class="lead.id"><input type="checkbox" class="selall"></th>
+	<?php foreach ($this->fields as $field => $label) : 	$selected = $this->sort == $field; ?>
+		<th class="<?php echo $field; ?>"><a
+				class="sort <?php if ($selected) : echo "selected"; endif; ?>"
+				title="Sort by <?php echo $label; ?>"
+				href="<?php echo $this->url('home', array('action' => 'index', 'page' => $this->page, 'sort' => $field, 'order' => ($selected ? $this->rorder : $this->order)), array('query' => $this->query), true); ?>">
+					<span>
+			<?php echo $label; ?> <span
+						class="glyphicon <?php echo $this->order; ?>" aria-hidden="true"></span>
+				</span>
+			</a></th>
+		<?php endforeach; ?>
+		<th class="action">Action</th>
+		</tr>
+	</thead>
+ <?php foreach ($this->leads as $lead) : ?>
+	<tr>
+		<td class="lead.id"><div class="checkbox"><?php echo $this->formElement($batchForm->get("sel[" . $lead->getId() . "]")); ?></div>
+		</td>
+		<td class="form.source"><?php echo $this->escapeHtml($lead->getReferrer());?></td>
+		<td class="timecreated"><?php echo date('m-d-Y H:i:s', strtotime($this->escapeHtml($lead->getTimecreated())));?></td>
+		<td class="submitted"><?php echo $this->escapeHtml($lead->getSubmitted()) ? 'Yes' : 'No';?></td>
+		<td class="lastresponse"><?php echo $this->escapeHtml($lead->getLastresponse());?></td>
+		<td class="actions"><a
+			href="<?php echo $this->url('home', array('action'=>'view', 'id' => $lead->getId()));?>">Details</a>
+         <?php if (! $this->escapeHtml($lead->getSubmitted())) : ?>
+         	&nbsp;|&nbsp;<a
+			href="<?php echo $this->url('home', array('action'=>'submit', 'id' => $lead->getId()));?>">Submit</a>
+         <?php endif; ?>
+     </td>
+	</tr>
+	
+	
+ <?php endforeach; ?>
+ 
+
+</table>
+<hr>
+<?php
+echo $this->formRow($batchForm->get('submit'));
+echo $this->form()->closeTag($filter);
+?>
+<hr class="small">
+<div class="formtable-header">
+<?php
+echo $this->paginationControl(
+		// the paginator object
+		$this->leads, 
+		// the scrolling style
+		'sliding', 
+		// the partial to use to render the control
+		'paginator-slide', 
+		// the route to link to when a user clicks a control link
+		array(
+				'sort' => $this->sort,
+				'order' => $this->order
+		));
+?>
+ </div>
+<script type="text/javascript">
+$(function(){
+	var $enabled = $("#leadstable TD .checkbox INPUT[type=checkbox][disabled!=disabled]");
+	if ($enabled.length == 0) {
+		$('#batchsubmitbutton').prop('disabled', 'disabled');
+	}
+	$('#leadstable TH .selall').click(function() {
+		$enabled.prop("checked",$(this).prop("checked"));
+	});
+});
+ </script>

@@ -1,0 +1,20 @@
+{
+  "name" : "zendframework/tmp-admin",
+  "description" : "Target Media Partners Admin Consike",
+  "require" : {
+    "php" : ">=5.5",
+    "zendframework/zendframework" : "~2.5",
+    "zf-commons/zfc-user-doctrine-orm" : "dev-master",
+    "bjyoungblood/bjy-authorize" : "=1.4.0",
+    "radnan/rdn-csv" : "=v1.1.0",
+    "muriloamaral/easyxml" : "dev-master",
+    "zfcampus/zf-oauth2" : "~1.0"
+  },
+  "require-dev" : {
+    "zendframework/zftool" : "dev-master",
+    "zendframework/zend-developer-tools" : "dev-master"
+  },
+  "keywords" : [ "framework", "zf2" ],
+  "license" : "BSD-3-Clause",
+  "homepage" : "http://framework.zend.com/"
+}

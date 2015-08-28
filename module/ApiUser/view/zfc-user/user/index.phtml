@@ -1,0 +1,34 @@
+<div style="float: left; padding-right: 16px;">
+<?php echo $this->gravatar($this->zfcUserIdentity()->getEmail())?>
+</div>
+<h3><?php echo $this->translate('Hello'); ?>, <?php echo $this->zfcUserDisplayName() ?>!</h3>
+<a href="<?php echo $this->url('zfcuser/logout') ?>">[<?php echo $this->translate('Sign Out'); ?>]</a>
+<div style="clear: both;"></div>
+<hr>
+<h4>Profile Options</h4>
+<table class="table" style="margin: 0 0 0 30px;">
+	<tr>
+		<td style="padding: 20px 0;"><a
+			href="<?php echo $this->url('zfcuser/changepassword');?>"
+			title="Change Password">Change Password</a></td>
+	</tr>
+	<tr>
+		<td style="padding: 20px 0;"><a
+			href="<?php echo $this->url('zfcuser/changeemail');?>"
+			title="Change Email">Change Email</a></td>
+	</tr>
+	<tr>
+		<td style="padding: 20px 0;">
+			<p>
+				<a class="viewkey btn btn-primary" role="button"
+					data-toggle="collapse" href="#apikey" aria-expanded="false"
+					aria-controls="apikey" title="View API Key">View API Key</a>
+			</p>
+			<section id="apikey" class="collapse">
+				<div class="well">
+					<p class="key"><?php echo $this->zfcUserIdentity()->getApiKey(); ?></p>
+				</div>
+			</section>
+		</td>
+	</tr>
+</table>

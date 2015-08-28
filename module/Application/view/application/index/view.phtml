@@ -1,0 +1,56 @@
+<?php
+// module/Application/view/application/index/edit.phtml:
+$title = 'View Lead';
+$this->headTitle($title);
+?>
+<h1>
+<?php echo $this->escapeHtml($title); ?>
+<span class="pull-right"> <a class="btn btn-info"
+		href="<?php echo $this->url('home', array('action'=>'index'));?>">Back</a>
+	</span>
+</h1>
+<?php
+$submission = $this->submission;
+$form = $this->form;
+
+$form->prepare();
+
+$detail = $form->get('detail');
+?>
+<div class="row content-row">
+	<div class="col-md-12">
+		<hr>
+		<h3><?php echo $detail->getLabel(); ?></h3>
+		<table class="table">
+<?php
+foreach ($detail as $name => $fieldSetorElement) {
+	echo "<tr" .
+			 ($fieldSetorElement->getAttribute("type") == "hidden" ? " class='hidden'" : "") .
+			 ">" . "<td>" . "<label>" . $fieldSetorElement->getLabel() .
+			 ": </label></td>" . "<td><p>" . $fieldSetorElement->getValue() .
+			 "</p>" . "</td></tr>\n";
+}
+
+?>
+</table>
+
+	</div>
+	<div class="col-md-12">
+
+<?php $lead = $form->get('lead'); ?>
+<hr>
+		<h3><?php echo $lead->getLabel(); ?></h3>
+		<table class="table">
+<?php
+foreach ($lead as $name => $fieldSetorElement) {
+	echo "<tr" .
+			 /* ($fieldSetorElement->getAttribute("type") == "hidden" ? " class='hidden'" : "") . */
+			 ">" . "<td>" . "<label>" . $fieldSetorElement->getLabel() . ": </label></td>" .
+			 "<td><p>" . $fieldSetorElement->getValue(true) . "</p>" .
+			 "</td></tr>\n";
+}
+
+?>
+</table>
+	</div>
+</div>
