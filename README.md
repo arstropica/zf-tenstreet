@@ -20,11 +20,11 @@ Using the SetEnv directive, add the APPLICATION_ENV variable to your VirtualHost
 
 Controllers
 ----------------
-## Application - Index
+# Application - Index
 List, explore and submit lead information to API.
 
-## Application - REST
+# Application - REST
 REST Endpoint providing interface between data sender and TenStreet API.
 
-## TenStreet - SoapClient
+# TenStreet - SoapClient
 SOAP Client for data submission to TenStreet API.
