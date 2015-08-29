@@ -17,3 +17,14 @@ Web server setup
 ----------------
 The APPLICATION_ENV environment variable is used to determine development vs production environments.  
 Using the SetEnv directive, add the APPLICATION_ENV variable to your VirtualHost configuration for Apache.  
+
+Controllers
+----------------
+## Application - Index
+List, explore and submit lead information to API.
+
+## Application - REST
+REST Endpoint providing interface between data sender and TenStreet API.
+
+## TenStreet - SoapClient
+SOAP Client for data submission to TenStreet API.
