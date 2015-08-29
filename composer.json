@@ -1,6 +1,6 @@
 {
-  "name" : "zendframework/tmp-admin",
-  "description" : "Target Media Partners Admin Consike",
+  "name" : "zendframework/zf-tenstreet",
+  "description" : "TenStreet Admin Console",
   "require" : {
     "php" : ">=5.5",
     "zendframework/zendframework" : "~2.5",
