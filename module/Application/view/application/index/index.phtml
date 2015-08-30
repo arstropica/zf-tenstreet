@@ -87,26 +87,31 @@ echo $this->form(null,
 		<th class="action">Action</th>
 		</tr>
 	</thead>
+	<tbody>
+	<?php if (count($this->leads) > 0) : ?>
  <?php foreach ($this->leads as $lead) : ?>
 	<tr>
-		<td class="lead.id"><div class="checkbox"><?php echo $this->formElement($batchForm->get("sel[" . $lead->getId() . "]")); ?></div>
-		</td>
-		<td class="form.source"><?php echo $this->escapeHtml($lead->getReferrer());?></td>
-		<td class="timecreated"><?php echo date('m-d-Y H:i:s', strtotime($this->escapeHtml($lead->getTimecreated())));?></td>
-		<td class="submitted"><?php echo $this->escapeHtml($lead->getSubmitted()) ? 'Yes' : 'No';?></td>
-		<td class="lastresponse"><?php echo $this->escapeHtml($lead->getLastresponse());?></td>
-		<td class="actions"><a
-			href="<?php echo $this->url('home', array('action'=>'view', 'id' => $lead->getId()));?>">Details</a>
+			<td class="lead.id"><div class="checkbox"><?php echo $this->formElement($batchForm->get("sel[" . $lead->getId() . "]")); ?></div>
+			</td>
+			<td class="form.source"><?php echo $this->escapeHtml($lead->getReferrer());?></td>
+			<td class="timecreated"><?php echo date('m-d-Y H:i:s', strtotime($this->escapeHtml($lead->getTimecreated())));?></td>
+			<td class="submitted"><?php echo $this->escapeHtml($lead->getSubmitted()) ? 'Yes' : 'No';?></td>
+			<td class="lastresponse"><?php echo $this->escapeHtml($lead->getLastresponse());?></td>
+			<td class="actions"><a
+				href="<?php echo $this->url('home', array('action'=>'view', 'id' => $lead->getId()));?>">Details</a>
          <?php if (! $this->escapeHtml($lead->getSubmitted())) : ?>
          	&nbsp;|&nbsp;<a
-			href="<?php echo $this->url('home', array('action'=>'submit', 'id' => $lead->getId()));?>">Submit</a>
+				href="<?php echo $this->url('home', array('action'=>'submit', 'id' => $lead->getId()));?>">Submit</a>
          <?php endif; ?>
      </td>
-	</tr>
-	
-	
+		</tr>
  <?php endforeach; ?>
- 
+ <?php else : ?>
+ <tr>
+			<td colspan="6"><p style="text-align: center">No Results Found.</p></td>
+		</tr>
+ <?php endif; ?>
+ </tbody>
 
 </table>
 <hr>

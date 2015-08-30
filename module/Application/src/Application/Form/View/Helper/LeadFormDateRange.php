@@ -22,10 +22,11 @@ HTPL;
 	\$(function() {
 		var \$inputId = '#%s';
 		function resize (e) {
-				var l = \$(this).val().length;
-				\$(this).width(((l + 1) * 6) + 'px');
+				var l = \$(\$inputId).val().length;
+				\$(\$inputId).width(((l + 1) * 6) + 'px');
 		}
 		\$(\$inputId).on('change', resize);
+		\$(window).on('resize', resize);
 	    function cb(start, end) {
 			start = start || null;
 			end = end || null;

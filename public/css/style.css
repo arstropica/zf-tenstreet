@@ -226,3 +226,13 @@ a.sort {
 	padding: 15px;
 	display: inline-block;
 }
+
+.form-control-daterange .form-control {
+	display: inline-block;
+}
+
+#leadstable THEAD TH,#leadstable THEAD TH A {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+} 
