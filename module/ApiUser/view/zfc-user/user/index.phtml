@@ -20,15 +20,9 @@
 	<tr>
 		<td style="padding: 20px 0;">
 			<p>
-				<a class="viewkey btn btn-primary" role="button"
-					data-toggle="collapse" href="#apikey" aria-expanded="false"
-					aria-controls="apikey" title="View API Key">View API Key</a>
+				<a class="gohome btn btn-primary" role="button"
+					href="<?php echo $this->url('home'); ?>" title="Go to Homepage">Homepage</a>
 			</p>
-			<section id="apikey" class="collapse">
-				<div class="well">
-					<p class="key"><?php echo $this->zfcUserIdentity()->getApiKey(); ?></p>
-				</div>
-			</section>
 		</td>
 	</tr>
 </table>
