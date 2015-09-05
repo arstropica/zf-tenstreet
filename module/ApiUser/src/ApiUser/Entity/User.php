@@ -276,6 +276,7 @@ class User implements UserInterface, ProviderInterface
 				for ($i = 0; $i < $len; ++ $i)
 					$key .= chr(mt_rand(33, 126));
 		
+		$this->setApiKey($key);
 		return $key;
 	}
 }

@@ -34,6 +34,7 @@ return array(
 				'user_entity_class' => 'ApiUser\Entity\User',
 				// telling ZfcUserDoctrineORM to skip the entities it defines
 				'enable_default_entities' => false,
+				'enable_registration' => false,
 				'enable_username' => true,
 				'auth_adapters' => array(
 						100 => 'ZfcUser\Authentication\Adapter\Db'
@@ -96,8 +97,7 @@ return array(
 												'register'
 										),
 										'roles' => array(
-												// 'guest',
-												'administrator'
+												// 'guest'
 										)
 								),
 								array(

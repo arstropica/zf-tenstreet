@@ -30,23 +30,11 @@ class Register extends AbstractListenerAggregate
 
 	public function onRegister (Event $e)
 	{
-		$sm = $e->getTarget()->getServiceManager();
-		$em = $sm->get('doctrine.entitymanager.orm_default');
 		$user = $e->getParam('user');
 		$form = $e->getParam('form');
 		
 		$username = $form->get('username')->getValue();
-		$roleId = $form->get('roleid')->getValue();
-		
-		if (! $roleId) {
-			$config = $sm->get('config');
-			$roleId = $config['zfcuser']['new_user_default_role'];
-		}
-		
-		$criteria = array(
-				'roleId' => $roleId
-		);
-		$role = $em->getRepository('ApiUser\Entity\Role')->findOneBy($criteria);
+		$role = $this->getRole($e);
 		
 		if ($role !== null) {
 			$user->addRole($role);
@@ -56,17 +44,17 @@ class Register extends AbstractListenerAggregate
 			$_username = $username;
 			for ($i = 0; $i < 3; $i ++) {
 				if ($this->checkUserExists($e, $_username)) {
-					$_username = $username . "_" . sprintf('%04d', rand(0, 9999));
+					$_username = $username . "_" . sprintf('%04d', 
+							rand(0, 9999));
 				} else {
 					break;
 				}
 			}
-			if ($this->checkUserExists($e, $_username)) {
+			if (! $this->checkUserExists($e, $_username)) {
 				$user->setUsername($_username);
+				$this->addOAuthClient($e, $_username);
 			}
 		}
-		
-		$user->setApiKey($user->addApiKey());
 	}
 
 	public function onRegisterPost (Event $e)
@@ -110,6 +98,26 @@ class Register extends AbstractListenerAggregate
 				));
 	}
 
+	public function getRole (Event $e)
+	{
+		$sm = $e->getTarget()->getServiceManager();
+		$em = $sm->get('doctrine.entitymanager.orm_default');
+		$form = $e->getParam('form');
+		$roleId = $form->get('roleid')->getValue();
+		
+		if (! $roleId) {
+			$config = $sm->get('config');
+			$roleId = $config['zfcuser']['new_user_default_role'];
+		}
+		
+		$criteria = array(
+				'roleId' => $roleId
+		);
+		
+		$role = $em->getRepository('ApiUser\Entity\Role')->findOneBy($criteria);
+		return $role;
+	}
+
 	public function checkUserExists (Event $e, $username)
 	{
 		$sm = $e->getTarget()->getServiceManager();
@@ -117,5 +125,36 @@ class Register extends AbstractListenerAggregate
 		$userObject = $mapper->findByUsername($username);
 		
 		return $userObject ? true : false;
+	}
+
+	public function addOAuthClient (Event $e, $username)
+	{
+		$result = false;
+		$role = $this->getRole($e);
+		
+		if ($role && in_array($role->getRoleId(), 
+				[
+						'administrator',
+						'moderator',
+						'user'
+				])) {
+			$sm = $e->getTarget()->getServiceManager();
+			$oAuth2Adapter = $sm->get(
+					'ApiUser\Authentication\Adapter\OAuth2Adapter');
+			
+			$user = $e->getParam('user');
+			$form = $e->getParam('form');
+			
+			$email = $form->get('email')->getValue();
+			if ($email && ! $oAuth2Adapter->checkClientId($email)) {
+				$apiKey = $user->addApiKey();
+				$redirect_uri = '/oauth/receivecode';
+				$grant_types = 'client_credentials refresh_token password jwt';
+				
+				$result = $oAuth2Adapter->setClientDetails($username, $apiKey, 
+						$redirect_uri, $grant_types, null, $email);
+			}
+		}
+		return $result;
 	}
 }

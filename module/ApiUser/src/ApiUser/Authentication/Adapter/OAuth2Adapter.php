@@ -17,6 +17,24 @@ class OAuth2Adapter extends PdoAdapter
 		return parent::__construct($connection, $config);
 	}
 
+	/**
+	 * Check client user_id
+	 *
+	 * @param string $client_id        	
+	 * @param string $client_secret        	
+	 * @return bool
+	 */
+	public function checkClientId ($client_id)
+	{
+		$stmt = $this->db->prepare(
+				sprintf('SELECT * from %s where client_id = :client_id', 
+						$this->config['client_table']));
+		$stmt->execute(compact('client_id'));
+		$result = $stmt->fetch();
+		
+		return $result;
+	}
+
 	public function getUser ($username)
 	{
 		$sql = sprintf('SELECT * from %s where email=:username', 
