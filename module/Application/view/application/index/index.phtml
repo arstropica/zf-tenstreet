@@ -7,7 +7,8 @@ $this->headTitle($title);
 <?php echo $this->escapeHtml($title); ?>
 <span class="pull-right" style="margin-left: 15px;"> <a
 		href="<?php echo $this->url('home', array('action' => 'export')); ?>"
-		class="btn btn-info" title="Export Leads">Export Leads</a>
+		class="btn btn-info" id="exportLeads" title="Export Leads">Export
+			Leads</a>
 	</span> <span class="pull-right"> <a
 		href="<?php echo $this->url('home', array('action' => 'add')); ?>"
 		class="btn btn-success" title="Add New Lead">Add New Lead</a>
@@ -33,6 +34,8 @@ echo $this->paginationControl(
 $filters = $this->filters;
 
 $filters->setAttribute('class', 'pull-right leadform');
+
+$filters->setAttribute('id', 'leadFilterForm');
 
 echo $this->form(null, 
 		\Application\Form\View\Helper\LeadFilterForm::LAYOUT_INLINE)->openTag(
@@ -144,6 +147,13 @@ $(function(){
 	}
 	$('#leadstable TH .selall').click(function() {
 		$enabled.prop("checked",$(this).prop("checked"));
+	});
+	$('#exportLeads').on('click', function(e){
+		e.preventDefault();
+		var url = $(this).prop('href');
+		var params = $('#leadFilterForm').serialize();
+		window.location.href = url + '?' + params;
+		return false;
 	});
 });
  </script>

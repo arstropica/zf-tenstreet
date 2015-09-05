@@ -304,6 +304,11 @@ class IndexController extends AbstractActionController
 
 	public function exportAction ()
 	{
+		$sl = $this->getServiceLocator();
+		$request = $this->getRequest();
+		$filters = $sl->get('FormElementManager')->get(
+				'\Application\Form\LeadFilterForm');
+		
 		$results = array();
 		$leadForm = new LeadForm();
 		$labels = array();
@@ -312,6 +317,18 @@ class IndexController extends AbstractActionController
 		$lead = new LeadEntity();
 		$form = new FormEntity();
 		$detail = new DetailEntity();
+		
+		$data = $request->getQuery();
+		$fdata = array();
+		$order = 'desc';
+		$sort = 'lead.id';
+		
+		if ($data) {
+			$filters->setData($data);
+			if ($filters->isValid()) {
+				$fdata = $filters->getData();
+			}
+		}
 		
 		$collection = array(
 				'lead' => $lead,
@@ -334,7 +351,9 @@ class IndexController extends AbstractActionController
 			}
 		}
 		
-		$submissions = $this->getSubmissionMapper()->fetchAll();
+		// grab the paginator from the LeadTable
+		$submissions = $this->getSubmissionMapper()->fetchAll(false, $sort, 
+				$order, $fdata);
 		
 		return $this->csvExport('Lead Report (' . date('Y-m-d') . ').csv', 
 				$headings, $submissions, 
@@ -373,10 +392,19 @@ class IndexController extends AbstractActionController
 			
 			if ($result && $result instanceof JsonModel) {
 				$data = $result->getVariable("data");
-				if ($data["submitted"] == 1) {
+				if (is_array($data) && isset($data['submitted']) &&
+						 $data["submitted"] == 1) {
 					// Redirect to View Lead
 					$message = "Your Lead has been submitted.";
 					$this->errorResponse->addMessage($message, "success");
+				} elseif ($data instanceof JsonModel) {
+					$err = $data->getVariables();
+					if (is_string($err['error'])) {
+						$message = $err['error'];
+					} else {
+						$message = 'An Unknown Error has occurred.';
+					}
+					$this->errorResponse->addMessage($message, "error");
 				} else {
 					$message = isset($data['lastresponse']) ? $data['lastresponse'] : 'An Unknown Error has occurred.';
 					$this->errorResponse->addMessage($message, "error");
