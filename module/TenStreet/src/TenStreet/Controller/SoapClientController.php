@@ -99,7 +99,7 @@ class SoapClientController extends AbstractActionController
 				$response = $this->PostClientData($id, $xml_data, $clientId, 
 						$password, $service);
 			} catch (\Exception $e) {
-				return $this->errorResponse->unknownError();
+				return $this->errorResponse->errorHandler(400, $e->getMessage());
 			}
 		} else {
 			return $this->errorResponse->insufficientAuthorization();
@@ -124,7 +124,8 @@ class SoapClientController extends AbstractActionController
 		if (! $this->client) {
 			$clientOptions = array(
 					'compression' => SOAP_COMPRESSION_ACCEPT,
-					'soap_version' => SOAP_1_1
+					'soap_version' => SOAP_1_1,
+					'connection_timeout' => 5
 			);
 			
 			$this->client = new Client($this->wsdl[$this->env], $clientOptions);
@@ -228,8 +229,13 @@ class SoapClientController extends AbstractActionController
 					$clientId, $password, $service);
 		} catch (\SoapFault $e) {
 			$hasException = true;
-			$exception = $this->xml2array($this->client->getLastResponse());
+			$message = $this->client->getLastResponse();
+			if (strlen($message)) {
+				$exception = $this->xml2array($message);
 			return $this->saveResponse($id, $exception);
+			} else {
+				return $this->errorResponse->errorHandler(400, $e->getMessage());
+			}
 		}
 		$response = $this->xml2array($xml_response);
 		return $this->saveResponse($id, $response);
