@@ -28,13 +28,14 @@ class SubmissionMapper
 		$this->dbAdapter = $dbAdapter;
 	}
 
-	public function fetchAll ()
+	public function fetchAll ($paging = false, $sort = "timecreated", $order = "DESC", 
+			$filters = array())
 	{
 		$results = array();
 		$leadMapper = new LeadMapper($this->dbAdapter);
 		$formMapper = new FormMapper($this->dbAdapter);
 		$detailMapper = new DetailMapper($this->dbAdapter);
-		$leads = $leadMapper->fetchAll();
+		$leads = $leadMapper->fetchAll($paging, $sort, $order, $filters);
 		foreach ($leads as $lead) {
 			$submission = new SubmissionEntity();
 			$form = $formMapper->getForm($lead->getFormid());
