@@ -46,7 +46,7 @@ class TenStreetDataMapper
 		
 		$PersonalData = $this->getPersonalData($submission);
 		
-		$displayFields = $this->getDisplayField($submission);
+		$displayFields = $this->getDisplayFields($submission);
 		
 		$tenStreetData->setApplicationData($ApplicationData);
 		
@@ -105,7 +105,7 @@ class TenStreetDataMapper
 		return $tenStreetEntity;
 	}
 
-	protected function getDisplayField (SubmissionEntity $submission)
+	protected function getDisplayFields (SubmissionEntity $submission)
 	{
 		$detail = $submission->getDetail();
 		
@@ -134,11 +134,11 @@ class TenStreetDataMapper
 		
 		$AppReferrer = $submission->getLead()->getReferrer();
 		
-		$DisplayField = $this->getDisplayField($submission);
+		$DisplayFields = $this->getDisplayFields($submission);
 		
 		$applicationData->setAppReferrer($AppReferrer);
 		
-		$applicationData->setDisplayField($DisplayField);
+		$applicationData->setDisplayFields($DisplayFields);
 		
 		return $applicationData;
 	}

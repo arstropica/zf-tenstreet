@@ -234,7 +234,8 @@ class Module implements AutoloaderProviderInterface,
 									'empty_option' => 'All Sites'
 							);
 							$attrs = array(
-									'id' => 'sites'
+									'id' => 'sites',
+									'class' => 'input-large'
 							);
 							$select = new LeadFormSelect('sites', $values, $opts, 
 									$attrs);

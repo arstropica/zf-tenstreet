@@ -15,10 +15,10 @@ class DisplayFieldHydratorStrategy implements StrategyInterface
 
 	public function extract ($displayFields)
 	{
-		$data = [];
+		$data = ['DisplayField' => []];
 		
 		foreach ($displayFields as $displayField) {
-			$data[] = $this->displayFieldHydrator->extract($displayField);
+			$data['DisplayField'][] = $this->displayFieldHydrator->extract($displayField);
 		}
 		
 		return $data;

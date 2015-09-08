@@ -60,7 +60,7 @@ class SoapClientController extends AbstractActionController
 
 	public function indexAction ()
 	{
-		if (! $this->authorize()) {
+		if (! $this->authorize() && ! $this->isUserAuthorized()) {
 			return $this->errorResponse->insufficientAuthorization();
 		}
 		return $this->errorResponse->methodNotAllowed();
@@ -76,7 +76,7 @@ class SoapClientController extends AbstractActionController
 				"data" => null
 		);
 		
-		$response = null;
+		$_response = null;
 		
 		$id = (int) $this->params()->fromRoute('id', 0);
 		
@@ -96,7 +96,7 @@ class SoapClientController extends AbstractActionController
 		
 		if (isset($clientId, $password, $service)) {
 			try {
-				$response = $this->PostClientData($id, $xml_data, $clientId, 
+				$_response = $this->PostClientData($id, $xml_data, $clientId, 
 						$password, $service);
 			} catch (\Exception $e) {
 				return $this->errorResponse->errorHandler(400, $e->getMessage());
@@ -105,7 +105,7 @@ class SoapClientController extends AbstractActionController
 			return $this->errorResponse->insufficientAuthorization();
 		}
 		
-		$result["data"] = $response;
+		$result["data"] = $_response;
 		
 		$response = $this->getResponse();
 		$response->setStatusCode(201);
@@ -232,7 +232,7 @@ class SoapClientController extends AbstractActionController
 			$message = $this->client->getLastResponse();
 			if (strlen($message)) {
 				$exception = $this->xml2array($message);
-			return $this->saveResponse($id, $exception);
+				return $this->saveResponse($id, $exception);
 			} else {
 				return $this->errorResponse->errorHandler(400, $e->getMessage());
 			}

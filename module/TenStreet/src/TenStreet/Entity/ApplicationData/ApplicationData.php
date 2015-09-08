@@ -6,7 +6,7 @@ class ApplicationData
 
 	protected $AppReferrer;
 
-	protected $DisplayField;
+	protected $DisplayFields;
 
 	public function getArrayCopy ()
 	{
@@ -35,30 +35,30 @@ class ApplicationData
 
 	/**
 	 *
-	 * @return the $DisplayField
+	 * @return the $DisplayFields
 	 */
-	public function getDisplayField ()
+	public function getDisplayFields ()
 	{
-		return $this->DisplayField;
+		return $this->DisplayFields;
 	}
 
 	/**
 	 *
-	 * @param field_type $DisplayField        	
+	 * @param field_type $DisplayFields        	
 	 */
-	public function setDisplayField ($DisplayField)
+	public function setDisplayFields ($DisplayFields)
 	{
-		$this->DisplayField = $DisplayField;
+		$this->DisplayFields = $DisplayFields;
 		return $this;
 	}
 
 	/**
 	 *
-	 * @param field_type $DisplayField        	
+	 * @param field_type $DisplayFields        	
 	 */
-	public function addDisplayField ($DisplayField)
+	public function addDisplayFields ($DisplayFields)
 	{
-		$this->DisplayField[] = $DisplayField;
+		$this->DisplayFields[] = $DisplayFields;
 		return $this;
 	}
 }

@@ -14,7 +14,7 @@ class ApplicationDataHydratorFactory implements FactoryInterface
 		
 		$parentlocator = $serviceLocator->getServiceLocator();
 		
-		$hydrator->addStrategy('DisplayField', 
+		$hydrator->addStrategy('DisplayFields', 
 				new DisplayFieldHydratorStrategy(
 						$parentlocator->get('DisplayFieldHydrator')));
 		
