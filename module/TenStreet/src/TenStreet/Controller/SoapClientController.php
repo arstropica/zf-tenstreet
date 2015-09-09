@@ -30,6 +30,8 @@ class SoapClientController extends AbstractActionController
 
 	protected $server;
 
+	protected $logger;
+
 	public function __construct (OAuth2Server $server, 
 			ServiceLocatorInterface $sm)
 	{
@@ -46,6 +48,8 @@ class SoapClientController extends AbstractActionController
 		$this->rootNode = $config['Controller']['SoapClient']['rootNode'];
 		
 		$this->wsdl = $config['Controller']['SoapClient']['wsdl'];
+		
+		$this->logger = $sm->get('Logger');
 	}
 
 	protected function authorize ()
@@ -238,6 +242,7 @@ class SoapClientController extends AbstractActionController
 			}
 		}
 		$response = $this->xml2array($xml_response);
+		
 		return $this->saveResponse($id, $response);
 	}
 
