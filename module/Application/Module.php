@@ -163,8 +163,8 @@ class Module implements AutoloaderProviderInterface,
 						{
 							$config = $sm->get('config');
 							$logger = new \Zend\Log\Logger();
-							if (isset($config['log']['file']) &&
-									 is_writable($config['log']['file'])) {
+							if (isset($config['log']['file']) && is_writable(
+									dirname($config['log']['file']))) {
 								$writer = new \Zend\Log\Writer\Stream(
 										$config['log']['file']);
 								$logger->addWriter($writer);
