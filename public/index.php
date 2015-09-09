@@ -2,7 +2,7 @@
 /**
  * Display all errors when APPLICATION_ENV is development.
  */
- 
+
 $config = 'config/application.config.php';
 if (isset($_SERVER['APPLICATION_ENV']) &&
 		 $_SERVER['APPLICATION_ENV'] == 'development') {
