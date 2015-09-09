@@ -12,6 +12,8 @@ class TenStreetData
 
 	protected $Company;
 
+	protected $DriverId;
+
 	protected $Authentication;
 
 	protected $ApplicationData;
@@ -58,6 +60,15 @@ class TenStreetData
 	public function getCompany ()
 	{
 		return $this->Company;
+	}
+
+	/**
+	 *
+	 * @return the $DriverId
+	 */
+	public function getDriverId ()
+	{
+		return $this->DriverId;
 	}
 
 	/**
@@ -124,6 +135,16 @@ class TenStreetData
 	public function setCompany ($Company)
 	{
 		$this->Company = $Company;
+		return $this;
+	}
+
+	/**
+	 *
+	 * @param field_type $DriverId        	
+	 */
+	public function setDriverId ($DriverId)
+	{
+		$this->DriverId = $DriverId;
 		return $this;
 	}
 

@@ -96,11 +96,19 @@ class TenStreetDataMapper
 		
 		$CompanyId = ($Mode == 'DEV') ? $config['Entity']['TenStreetData']['CompanyId'] : $submission->getLead()->getCompanyid();
 		
+		$Company = $submission->getLead()->getCompany();
+		
+		$DriverId = $submission->getLead()->getDriverid();
+		
 		$tenStreetEntity->setMode($Mode);
 		
 		$tenStreetEntity->setCompanyId($CompanyId);
 		
 		$tenStreetEntity->setSource($Source);
+		
+		$tenStreetEntity->setCompany($Company);
+		
+		$tenStreetEntity->setDriverId($DriverId);
 		
 		return $tenStreetEntity;
 	}
