@@ -197,7 +197,8 @@ class Module implements AutoloaderProviderInterface,
 				'invokables' => array(
 						'form' => 'Application\Form\View\Helper\LeadFilterForm',
 						'formRow' => 'Application\Form\View\Helper\LeadFormRow',
-						'formDateRange' => 'Application\Form\View\Helper\LeadFormDateRange'
+						'formDateRange' => 'Application\Form\View\Helper\LeadFormDateRange',
+						'tableCollapse' => 'Application\View\Helper\TableCollapse'
 				),
 				'factories' => array(
 						'formElement' => 'Application\Form\View\Helper\Factory\LeadFormElementFactory',

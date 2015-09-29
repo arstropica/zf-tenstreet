@@ -9,7 +9,7 @@ use Zend\View\Helper\AbstractHelper;
 use Application\Controller\Plugin\BodyClasses;
 
 /**
- * ExtendedFlashMessenger helper class
+ * Extended BodyClass helper class
  */
 class BodyClasses extends AbstractHelper{
     

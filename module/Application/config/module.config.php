@@ -6,6 +6,7 @@
  * @copyright Copyright (c) 2005-2015 Zend Technologies USA Inc. (http://www.zend.com)
  * @license   http://framework.zend.com/license/new-bsd New BSD License
  */
+$env = getenv('APPLICATION_ENV') ?  : 'production';
 return array(
 		'controllers' => array(
 				'invokables' => array(
@@ -28,7 +29,7 @@ return array(
 												'action' => 'index'
 										),
 										'constraints' => array(
-												'action' => 'index|view|edit|add|export|submit|batchsubmit',
+												'action' => 'index|view|edit|add|export|import|submit|batchsubmit',
 												'id' => '[0-9]+',
 												'page' => '[0-9]+',
 												'sort' => '[a-zA-Z][a-zA-Z0-9._-]*',
@@ -91,7 +92,7 @@ return array(
 		),
 		'view_manager' => array(
 				'display_not_found_reason' => true,
-				'display_exceptions' => true,
+				'display_exceptions' => ($env == 'production') ? false : true,
 				'doctype' => 'HTML5',
 				'not_found_template' => 'error/404',
 				'exception_template' => 'error/index',
@@ -120,7 +121,8 @@ return array(
 				'invokables' => array(
 						'form' => 'Application\Form\View\Helper\LeadFilterForm',
 						'formRow' => 'Application\Form\View\Helper\LeadFormRow',
-						'formDateRange' => 'Application\Form\View\Helper\LeadFormDateRange'
+						'formDateRange' => 'Application\Form\View\Helper\LeadFormDateRange',
+						'tableCollapse' => 'Application\View\Helper\TableCollapse'
 				),
 				'factories' => array(
 						'formElement' => 'Application\Form\View\Helper\Factory\LeadFormElementFactory'

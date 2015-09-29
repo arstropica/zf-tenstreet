@@ -5,11 +5,13 @@
  * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-system-configuration
  * @see http://framework.zend.com/manual/current/en/tutorials/config.advanced.html#environment-specific-application-configuration
  */
+$env = getenv('APPLICATION_ENV') ?: 'development';
 return array(
 		// This should be an array of module namespaces used in the application.
 		'modules' => array(
 				'Application',
 				'ZendDeveloperTools',
+				'BjyProfiler',
 				'EasyXML',
 				'TenStreet',
 				'RdnCsv',
@@ -45,7 +47,8 @@ return array(
 				// provided by modules themselves. Paths may use GLOB_BRACE
 				// notation.
 				'config_glob_paths' => array(
-						'config/autoload/{{,*.}global,{,*.}local}.php'
+						// 'config/autoload/{{,*.}global,{,*.}local}.php'
+						sprintf('config/autoload/{,*.}{global,%s,local}.php', $env)
 				)
 		)
 );

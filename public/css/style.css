@@ -231,8 +231,74 @@ a.sort {
 	display: inline-block;
 }
 
-#leadstable THEAD TH,#leadstable THEAD TH A {
+#leadstable thead th, #leadstable thead th a {
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-} 
+}
+
+#leadimport .fieldset {
+	padding: 10px 30px;
+	border: 1px solid #DDD;
+	margin: 0 0 15px 0;
+}
+
+#leadimport .form-group {
+	margin: 15px 0;
+}
+
+#leadimport .required .fieldset legend {
+	font-weight: bold;
+}
+
+#leadimport .required .fieldset legend:after {
+	content: ' *';
+}
+
+#leadimport .fieldset legend {
+	padding: 0 10px;
+	border: none;
+	display: inline-block;
+	width: auto;
+	text-transform: uppercase;
+	font-size: 95%;
+	margin: 0;
+}
+
+#leadimport .import-fields > .col-xs-12 {
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#leadimport select.form-control.match {
+	border-color: orange;
+}
+
+#leadimport select.form-control.custom {
+	border-color: green;
+}
+
+.table-collapse > tbody > tr.accordion-toggle > td {
+	cursor: pointer;
+}
+
+.table-collapse > tbody > tr.accordion-toggle.invalid > td {
+	background: #F45025;
+}
+
+.table-collapse > tbody > tr.accordion-toggle:hover > td {
+	background: #D6F8DF;
+}
+
+.table-collapse .hiddenRow {
+	border: none;
+}
+
+.table-collapse .hiddenRow > td {
+	padding: 0px;
+	border: none;
+}
+
+.table-collapse .hiddenRow table {
+	margin: 0;
+}

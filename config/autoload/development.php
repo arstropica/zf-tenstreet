@@ -10,7 +10,22 @@
  * in ZendSkeletonApplication. This is a good practice, as it prevents sensitive
  * credentials from accidentally being committed into version control.
  */
-
 return array(
-		'upload_location'   => __DIR__.'/../../assets'
+		'service_manager' => array(
+				'abstract_factories' => array(
+						'Zend\\Db\\Adapter\\AdapterAbstractServiceFactory'
+				),
+				'factories' => array(
+						'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory'
+				)
+		),
+		'db' => array(
+				'username' => 'devtmpad_apiuser',
+				'password' => 'cary5were',
+				'driver' => 'Pdo',
+				'dsn' => 'mysql:dbname=devtmpad_apiuser;hostname=localhost',
+				'driver_options' => array(
+						PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\''
+				)
+		)
 );

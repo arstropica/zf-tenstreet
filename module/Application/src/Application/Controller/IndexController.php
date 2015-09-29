@@ -9,7 +9,11 @@ use Application\Entity\Lead as LeadEntity;
 use Application\Entity\Form as FormEntity;
 use Application\Entity\Detail as DetailEntity;
 use Application\Controller\Plugin\ErrorResponse;
+use Application\Form\LeadImportForm;
 use Zend\View\Model\JsonModel;
+use Zend\File\Transfer\Adapter\Http as FileHttp;
+use Zend\Validator\File\Size;
+use Zend\Validator\File\Extension as FileExt;
 
 class IndexController extends AbstractActionController
 {
@@ -52,11 +56,7 @@ class IndexController extends AbstractActionController
 				);
 				$this->errorResponse->addMessages(null, $message, 
 						$filters->getMessages());
-				/*
-				 * throw new \Exception(
-				 * "Invalid Search Paramters: \n" .
-				 * print_r($filters->getMessages(), true));
-				 */
+				
 				$page = 1;
 				$order = 'desc';
 				$rorder = $order == 'desc' ? 'asc' : 'desc';
@@ -363,9 +363,163 @@ class IndexController extends AbstractActionController
 				));
 	}
 
-	public function extractSubmission (SubmissionEntity $submission)
+	public function importAction ()
 	{
-		return $this->getSubmissionMapper()->extract($submission);
+		$sl = $this->getServiceLocator();
+		$view = $sl->get('viewhelpermanager');
+		$view->get('HeadScript')->appendFile(
+				$view->get('basePath')
+					->__invoke('js/app.js'));
+		
+		$view->get('HeadLink')->appendStylesheet(
+				$view->get('basePath')
+					->__invoke('css/nav-wizard.bootstrap.css'));
+		
+		$request = $this->getRequest();
+		
+		$results = array(
+				'fields' => false,
+				'stage' => 1,
+				'headings' => [],
+				'form' => false,
+				'_tmp' => false,
+				'dataCount' => false,
+				'data' => false,
+				'valid' => false
+		);
+		$form = new LeadImportForm();
+		
+		$post = $request->getPost()->toArray();
+		$files = $request->getFiles()->toArray();
+		
+		if ($post || $files) {
+			$results['stage'] = 2;
+			// set data post and file ...
+			$data = array_merge_recursive($post, 
+					$request->getFiles()->toArray());
+			
+			$form->setData($data);
+			
+			if ($form->isValid()) {
+				// Handle Uploads
+				if ($files) {
+					$file = $this->params()->fromFiles('leadsUpload');
+					$tmp_file = $this->validateImportFile($file);
+					if ($tmp_file) {
+						$csv = $this->extractCSV(
+								$this->getUploadPath() . '/' . $tmp_file);
+						
+						if ($csv['count']) {
+							// Setup Import Form
+							$fieldSet = $form->addImportFieldset(
+									array_combine($csv['headings'], 
+											$csv['headings']));
+							$form->get('leadTmpFile')->setValue($tmp_file);
+							$form->get('submit')->setValue('Import');
+							
+							$results['_tmp'] = $tmp_file;
+							$results['count'] = $csv['count'];
+							$results['headings'] = $csv['headings'];
+							$results['fields'] = $fieldSet::getStructuredFieldNames();
+						}
+					}
+				}
+				
+				// Handle Field Matching
+				if ($post && isset($post['match'], $post['leadTmpFile'])) {
+					$importFieldset = $form->getImportFieldset();
+					$results['stage'] = 3;
+					$match = $post['match'];
+					$tmp_file = $this->getUploadPath() . '/' .
+							 $post['leadTmpFile'];
+					$csv = $this->extractCSV($tmp_file);
+					if ($csv['count']) {
+						$results['data'] = $this->mapImportedValues(
+								$csv['body'], $match, false);
+						if ($results['data']) {
+							$results['valid'] = array_map(
+									function  ($v)
+									{
+										return $v ? 'valid' : 'invalid';
+									}, 
+									array_map(
+											array(
+													$this,
+													'checkDuplicateImport'
+											), $results['data']));
+							if (($invalid = array_keys($results['valid'], 
+									'invalid')) === true) {
+								$this->errorResponse->addMessage(
+										count($invalid) .
+												 " duplicate leads were found in your imported data.", 
+												"error");
+							}
+							$form = $this->addImportFields($form, 
+									$results['data'], $results['valid']);
+						}
+						$results['headings'] = array_intersect(
+								$importFieldset::getFieldNames(), 
+								[
+										'timecreated',
+										'FirstName',
+										'LastName',
+										'Email'
+								]);
+						$form->addConfirmField();
+						$form->get('submit')->setValue('Confirm');
+					} else {
+						$message = "No valid records could be imported.";
+						$this->errorResponse->addMessage($message, "error");
+					}
+				}
+				// Handle Import save
+				if ($post && isset($post['confirm'], $post['submissions'])) {
+					$importOutcome = false;
+					$submissions = $post['submissions'];
+					if ($submissions && is_array($submissions)) {
+						$importOutcome = true;
+						foreach ($submissions as $extract) {
+							$submission = $this->getSubmissionMapper()->hydrate(
+									$extract, 'flat');
+							if ($submission) {
+								$this->getSubmissionMapper()->saveSubmission(
+										$submission);
+							} elseif ($importOutcome) {
+								$importOutcome = false;
+							}
+						}
+					}
+					if (! $importOutcome) {
+						$message = "One or more records could not be imported.";
+						$this->errorResponse->addMessage($message, "error");
+					} else {
+						$message = count($submissions) .
+								 " records were imported.";
+						$this->errorResponse->addMessage($message, "success");
+					}
+					return $this->redirect()->toRoute('home', 
+							array(
+									'action' => $importOutcome ? 'index' : 'import'
+							), 
+							array(
+									'query' => array(
+											'msg' => 1
+									)
+							));
+				}
+			} else {
+				$message = array(
+						"You have invalid Form Entries."
+				);
+				$this->errorResponse->addMessages(null, $message, 
+						$form->getMessages());
+			}
+		} else {
+			$form->addUploadField();
+		}
+		
+		$results['form'] = $form;
+		return $results;
 	}
 
 	public function submitAction ()
@@ -475,5 +629,153 @@ class IndexController extends AbstractActionController
 	{
 		$sm = $this->getServiceLocator();
 		return $sm->get('SubmissionMapper');
+	}
+
+	protected function extractSubmission (SubmissionEntity $submission)
+	{
+		return $this->getSubmissionMapper()->extract($submission);
+	}
+
+	protected function getSubmissionFields (SubmissionEntity $submission)
+	{
+		return $this->getSubmissionMapper()->getFields($submission, false);
+	}
+
+	protected function validateImportFile ($file)
+	{
+		$size = new Size(
+				array(
+						'min' => 1024,
+						'max' => 2048000
+				)); // min/max bytes filesize
+		
+		$adapter = new FileHttp();
+		$ext = new FileExt(
+				array(
+						'extension' => array(
+								'csv'
+						)
+				));
+		$adapter->setValidators(array(
+				$size,
+				$ext
+		), $file['name']);
+		$isValid = $adapter->isValid();
+		if (! $isValid) {
+			$dataError = $adapter->getMessages();
+			$this->errorResponse->addMessage($dataError, "error");
+		} else {
+			$adapter->setDestination($this->getUploadPath());
+			if ($adapter->receive($file['name'])) {
+				$isValid = $file['name'];
+			}
+		}
+		return $isValid;
+	}
+
+	protected function getUploadPath ()
+	{
+		$config = $this->getServiceLocator()->get('config');
+		return $config['upload_location'];
+	}
+
+	protected function extractCSV ($filepath)
+	{
+		$result = [
+				'body' => false,
+				'headings' => false,
+				'count' => false
+		];
+		$csv = $this->csvImport($filepath);
+		if ($csv && $csv instanceof \Iterator) {
+			$result['body'] = [];
+			foreach ($csv as $_csv) {
+				$_row = [];
+				foreach ($_csv as $k => $v) {
+					$_row[$this->clean_bom($k)] = $v;
+				}
+				$result['body'][] = $_row;
+			}
+			$result['headings'] = array_keys(current($result['body']));
+			$result['count'] = count($result['body']);
+		}
+		return $result;
+	}
+
+	protected function addImportFields (LeadImportForm $form, $data, 
+			$valid = false)
+	{
+		if ($data) {
+			foreach ($data as $i => $row) {
+				if (! $valid || (isset($valid[$i]) && $valid[$i] == 'valid')) {
+					foreach ($row as $field => $value) {
+						$form->add(
+								array(
+										'name' => "submissions[{$i}][{$field}]",
+										'attributes' => array(
+												'value' => $value,
+												'type' => 'hidden'
+										)
+								));
+					}
+				}
+			}
+		}
+		return $form;
+	}
+
+	protected function mapImportedValues ($csv, $match, $structured = true)
+	{
+		$submissions = array();
+		$i = 0;
+		foreach ($csv as $row) {
+			$mappedArray = $this->mapCSVRow($row, $match);
+			if ($structured) {
+				$submissions[$i] = $this->getSubmissionMapper()->extract(
+						$this->getSubmissionMapper()
+							->hydrate($mappedArray));
+			} else {
+				$submissions[$i] = $mappedArray;
+			}
+			$i ++;
+		}
+		
+		return $submissions;
+	}
+
+	protected function checkDuplicateImport ($row)
+	{
+		$where = [
+				'ipaddress' => $row['ipaddress'],
+				'timecreated' => $row['timecreated']
+		];
+		
+		return ! $this->getLeadMapper()->findLead($where);
+	}
+
+	protected function mapCSVRow ($row, $match)
+	{
+		$result = array();
+		foreach ($match as $fieldName => $value) {
+			if ($value && isset($row[$value])) {
+				switch ($fieldName) {
+					case 'Question1':
+					case 'Question2':
+					case 'Question3':
+						$result[$fieldName] = $value;
+						$result['Answer' . substr($fieldName, - 1)] = $row[$value];
+						break;
+					default:
+						$result[$fieldName] = $row[$value];
+						break;
+				}
+			}
+		}
+		return $result;
+	}
+
+	protected function clean_bom ($str)
+	{
+		return trim(preg_replace('/[\x00-\x1F\x80-\xFF]/', '', $str), '"');
 	}
 }

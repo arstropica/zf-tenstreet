@@ -8,7 +8,8 @@
     "bjyoungblood/bjy-authorize" : "=1.4.0",
     "radnan/rdn-csv" : "=v1.1.0",
     "muriloamaral/easyxml" : "dev-master",
-    "zfcampus/zf-oauth2" : "~1.0"
+    "zfcampus/zf-oauth2" : "~1.0",
+    "bjyoungblood/BjyProfiler" : "dev-master"
   },
   "require-dev" : {
     "zendframework/zftool" : "dev-master",

@@ -92,6 +92,27 @@ class LeadMapper
 		return $resultset;
 	}
 
+	public function findLead ($where)
+	{
+		$select = $this->sql->select();
+		$select->where($where);
+		
+		$statement = $this->sql->prepareStatementForSqlObject($select);
+		$result = $statement->execute()->current();
+		if (! $result) {
+			return false;
+		}
+		
+		$hydrator = new ClassMethods();
+		$hydrator->addStrategy('timecreated', new DateTimeLocalStrategy());
+		$hydrator->addStrategy('timesubmitted', new DateTimeLocalStrategy());
+		$hydrator->addStrategy('submitted', new BooleanStrategy());
+		$lead = new LeadEntity();
+		$hydrator->hydrate($result, $lead);
+		
+		return $lead;
+	}
+	
 	public function getLead ($id)
 	{
 		$select = $this->sql->select();

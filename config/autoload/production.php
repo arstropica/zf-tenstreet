@@ -12,5 +12,8 @@
  */
 
 return array(
-		'upload_location'   => __DIR__.'/../../assets'
+     'db' => array(
+         'username' => 'apiuser',
+         'password' => 'cary5were',
+     ),
 );
